@@ -6,26 +6,24 @@ let offsetX = 0;
 let offsetY = 0;
 
 items.forEach((item) => {
-
   item.addEventListener("mousedown", function (e) {
-
     currentItem = item;
 
     const rect = item.getBoundingClientRect();
-    const parentRect = container.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
 
     item.style.position = "absolute";
-    item.style.left = (rect.left - parentRect.left) + "px";
-    item.style.top = (rect.top - parentRect.top) + "px";
+    item.style.left = rect.left - containerRect.left + "px";
+    item.style.top = rect.top - containerRect.top + "px";
+
+    item.style.zIndex = "1000";
 
     offsetX = e.offsetX;
     offsetY = e.offsetY;
   });
-
 });
 
 document.addEventListener("mousemove", function (e) {
-
   if (!currentItem) return;
 
   const containerRect = container.getBoundingClientRect();
@@ -54,5 +52,9 @@ document.addEventListener("mousemove", function (e) {
 });
 
 document.addEventListener("mouseup", function () {
+  if (currentItem) {
+    currentItem.style.zIndex = "";
+  }
+
   currentItem = null;
 });

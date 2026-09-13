@@ -1,12 +1,17 @@
-const items = document.querySelectorAll(".item");
 const container = document.querySelector(".items");
+
+container.style.display = "grid";
+container.style.gridTemplateColumns = "repeat(5, 200px)";
+container.style.gap = "20px";
+
+const items = document.querySelectorAll(".item");
 
 let currentItem = null;
 let offsetX = 0;
 let offsetY = 0;
 
 items.forEach((item) => {
-  item.addEventListener("mousedown", function (e) {
+  item.addEventListener("mousedown", (e) => {
     currentItem = item;
 
     const rect = item.getBoundingClientRect();
@@ -16,14 +21,12 @@ items.forEach((item) => {
     item.style.left = rect.left - containerRect.left + "px";
     item.style.top = rect.top - containerRect.top + "px";
 
-    item.style.zIndex = "1000";
-
     offsetX = e.offsetX;
     offsetY = e.offsetY;
   });
 });
 
-document.addEventListener("mousemove", function (e) {
+document.addEventListener("mousemove", (e) => {
   if (!currentItem) return;
 
   const containerRect = container.getBoundingClientRect();
@@ -33,28 +36,18 @@ document.addEventListener("mousemove", function (e) {
 
   x = Math.max(
     0,
-    Math.min(
-      x,
-      container.clientWidth - currentItem.offsetWidth
-    )
+    Math.min(x, container.clientWidth - currentItem.offsetWidth)
   );
 
   y = Math.max(
     0,
-    Math.min(
-      y,
-      container.clientHeight - currentItem.offsetHeight
-    )
+    Math.min(y, container.clientHeight - currentItem.offsetHeight)
   );
 
   currentItem.style.left = x + "px";
   currentItem.style.top = y + "px";
 });
 
-document.addEventListener("mouseup", function () {
-  if (currentItem) {
-    currentItem.style.zIndex = "";
-  }
-
+document.addEventListener("mouseup", () => {
   currentItem = null;
 });

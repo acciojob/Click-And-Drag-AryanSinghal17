@@ -1,41 +1,53 @@
-// Your code here.
-const slider = document.querySelector('.items');
+const items = document.querySelectorAll('.item');
+const container = document.querySelector('.items');
 
-let isDown = false;
-let startX;
-let scrollLeft;
+let currentItem = null;
+let offsetX = 0;
+let offsetY = 0;
 
-slider.addEventListener('mousedown', (e) => {
-    isDown = true;
+items.forEach((item) => {
 
-    slider.classList.add('active');
+    item.style.position = "absolute";
 
-    startX = e.pageX - slider.offsetLeft;
+    item.addEventListener("mousedown", function(e) {
 
-    scrollLeft = slider.scrollLeft;
+        currentItem = item;
+
+        offsetX = e.offsetX;
+        offsetY = e.offsetY;
+    });
 });
 
-slider.addEventListener('mouseleave', () => {
-    isDown = false;
+document.addEventListener("mousemove", function(e) {
 
-    slider.classList.remove('active');
+    if (!currentItem) return;
+
+    let containerRect = container.getBoundingClientRect();
+
+    let x = e.clientX - containerRect.left - offsetX;
+    let y = e.clientY - containerRect.top - offsetY;
+
+    // boundaries
+    x = Math.max(
+        0,
+        Math.min(
+            x,
+            container.clientWidth - currentItem.offsetWidth
+        )
+    );
+
+    y = Math.max(
+        0,
+        Math.min(
+            y,
+            container.clientHeight - currentItem.offsetHeight
+        )
+    );
+
+    currentItem.style.left = x + "px";
+    currentItem.style.top = y + "px";
 });
 
-slider.addEventListener('mouseup', () => {
-    isDown = false;
-
-    slider.classList.remove('active');
-});
-
-slider.addEventListener('mousemove', (e) => {
-
-    if (!isDown) return;
-
-    e.preventDefault();
-
-    const x = e.pageX - slider.offsetLeft;
-
-    const walk = x - startX;
-
-    slider.scrollLeft = scrollLeft - walk;
+document.addEventListener("mouseup", function() {
+    currentItem = null;
 });

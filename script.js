@@ -1,53 +1,44 @@
-const items = document.querySelectorAll('.item');
-const container = document.querySelector('.items');
+const items = document.querySelectorAll(".item");
 
 let currentItem = null;
-let offsetX = 0;
-let offsetY = 0;
+let shiftX = 0;
+let shiftY = 0;
 
 items.forEach((item) => {
 
-    item.style.position = "absolute";
+  item.addEventListener("mousedown", function (e) {
 
-    item.addEventListener("mousedown", function(e) {
+    currentItem = item;
 
-        currentItem = item;
+    const rect = item.getBoundingClientRect();
 
-        offsetX = e.offsetX;
-        offsetY = e.offsetY;
-    });
+    shiftX = e.clientX - rect.left;
+    shiftY = e.clientY - rect.top;
+
+    item.style.position = "fixed";
+    item.style.zIndex = "1000";
+
+    moveAt(e.pageX, e.pageY);
+  });
+
 });
 
-document.addEventListener("mousemove", function(e) {
+function moveAt(pageX, pageY) {
 
-    if (!currentItem) return;
+  if (!currentItem) return;
 
-    let containerRect = container.getBoundingClientRect();
+  currentItem.style.left = pageX - shiftX + "px";
+  currentItem.style.top = pageY - shiftY + "px";
+}
 
-    let x = e.clientX - containerRect.left - offsetX;
-    let y = e.clientY - containerRect.top - offsetY;
+document.addEventListener("mousemove", function (e) {
 
-    // boundaries
-    x = Math.max(
-        0,
-        Math.min(
-            x,
-            container.clientWidth - currentItem.offsetWidth
-        )
-    );
+  if (!currentItem) return;
 
-    y = Math.max(
-        0,
-        Math.min(
-            y,
-            container.clientHeight - currentItem.offsetHeight
-        )
-    );
-
-    currentItem.style.left = x + "px";
-    currentItem.style.top = y + "px";
+  moveAt(e.pageX, e.pageY);
 });
 
-document.addEventListener("mouseup", function() {
-    currentItem = null;
+document.addEventListener("mouseup", function () {
+
+  currentItem = null;
 });
